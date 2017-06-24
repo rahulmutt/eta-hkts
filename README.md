@@ -1,5 +1,13 @@
 # Eta Higher-Kinded Types (HKTS)
 
+## Running
+
+```shell
+./run.sh
+```
+
+## Description
+
  The Eta runtime currently does not expose a generics-based interface to run pure Eta functions and computations from the Java side, so working with Eta data types on the
  Java side has absolutely no type-safety.
 
@@ -20,18 +28,13 @@ type-safety on the Java side for a wide range of features, the main Eta compiler
 and runtime system will be modified to expose generics-based API for using Eta 
 libraries directly from Java.
 
-# Source Code Navigation
+## Source Code Navigation
 The entry point of the code is `src/HKT.java`. The remaining files setup the class
 hierarchy that would be used for a lazily-evaluated, pure functional language.
 
-# Prerequisites
+## Prerequisites
 - Java 1.5+ (Generics support)
 - Unix-based OS
   - If you don't have a Unix-based OS (i.e. Windows), you can try manually running
     the commands listed in the `run.sh` script in the Command Prompt.
 
-# Running
-
-```shell
-./run.sh
-```
