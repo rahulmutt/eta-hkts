@@ -13,7 +13,7 @@ no attempt at optimization.
 
 Features:
 - Extensive use of F-bounded polymorphism.
-- Relatively simple types on the Java size.
+- Relatively simple types on the Java side.
 
 This is an ongoing investigation and once it is determined that we can get decent
 type-safety on the Java side for a wide range of features, the main Eta compiler
