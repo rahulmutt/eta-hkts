@@ -33,7 +33,7 @@ The entry point of the code is `src/HKT.java`. The remaining files setup the cla
 hierarchy that would be used for a lazily-evaluated, pure functional language.
 
 ## Prerequisites
-- Java 1.5+ (Generics support)
+- Java 1.8+ (Generics Support + Type Inference)
 - Unix-based OS
   - If you don't have a Unix-based OS (i.e. Windows), you can try manually running
     the commands listed in the `run.sh` script in the Command Prompt.
