@@ -43,6 +43,119 @@ public class HKT {
         System.out.println(result2);
     }
 
+    /* Dictionaries for Maybe */
+
+    @SuppressWarnings("unchecked")
+    public static final Functor<Maybe.T> $dFunctorMaybe =
+        new Functor<Maybe.T>(
+            new Function() {
+                @Override
+                public Value apply(Closure f) {
+                    return new Function() {
+                        @Override
+                        public Value apply(Closure ma_) {
+                            Maybe ma = (Maybe) ma_.evaluate();
+                            int tag = ma.getTag();
+                            if (tag == 1) {
+                                return Nothing.value();
+                            } else {
+                                Closure x = ((Just) ma).x1;
+                                return new Just(new Ap2(f, x));
+                            }
+                        }
+                    };
+                }
+            });
+
+    @SuppressWarnings("unchecked")
+    public static final Applicative<Maybe.T> $dApplicativeMaybe =
+        new Applicative<Maybe.T>(
+            $dFunctorMaybe,
+            /* pure :: a -> Maybe a*/
+            new Function() {
+                @Override
+                public Value apply(Closure a) {
+                    return new Just(a);
+                }
+            },
+            /* ap :: Maybe (a -> b) -> Maybe a -> Maybe b */
+            new Function() {
+                @Override
+                public Value apply(Closure fab_) {
+                    return new Function() {
+                        @Override
+                        public Value apply(Closure fa) {
+                            Maybe fab = (Maybe) fab_.evaluate();
+                            int tag = fab.getTag();
+                            if (tag == 1) {
+                                return Nothing.value();
+                            } else {
+                                Closure f = ((Just) fab).x1;
+                                return $dFunctorMaybe.fmap().evaluate().apply(f).apply(fa);
+                            }
+                        }
+                    };
+
+                }
+            });
+
+    @SuppressWarnings("unchecked")
+    public static final Monad<Maybe.T> $dMonadMaybe =
+        new Monad<Maybe.T>(
+            $dApplicativeMaybe,
+            /* bind :: Maybe a -> (a -> Maybe b) -> Maybe b */
+            new Function() {
+                @Override
+                public Value apply(Closure ma_) {
+                    return new Function() {
+                        @Override
+                        public Value apply(Closure amb) {
+                            Maybe ma = (Maybe) ma_.evaluate();
+                            int tag = ma.getTag();
+                            if (tag == 1) {
+                                return Nothing.value();
+                            } else {
+                                Closure x = ((Just) ma).x1;
+                                return ((Function) amb.evaluate()).apply(x);
+                            }
+                        }
+                    };
+                }
+            });
+
+    /* Dictionaries for List */
+
+    @SuppressWarnings("unchecked")
+    public static final Functor<List.T> $dFunctorList =
+        new Functor<List.T>(
+            new Function() {
+                @Override
+                public Value apply(Closure f) {
+                    return new Function() {
+                        @Override
+                        public Value apply(Closure xs) {
+                            return map(f, xs);
+                        }
+                    };
+                }
+            });
+
+    @SuppressWarnings("unchecked")
+    public static final Applicative<List.T> $dApplicativeList =
+        new Applicative<List.T>(
+            $dFunctorList,
+            /* pure :: a -> List a*/
+            new Function() {
+                @Override
+                public Value apply(Closure a) {
+                    return new Cons(a, Nil.value());
+                }
+            },
+            /* ap :: List (a -> b) -> List a -> List b */
+            /* TODO */
+            null);
+
+
     /* fcatMaybes :: (Functor f) => a -> f (Maybe a) -> f a
        fcatMaybes def fma = fmap maybeDef fma
          where maybeDef (Just a) = a
@@ -73,44 +186,6 @@ public class HKT {
             }
         }
     }
-
-    @SuppressWarnings("unchecked")
-    public static final Functor<List.T> $dFunctorList =
-        new Functor<List.T>(
-            new Function() {
-                @Override
-                public Value apply(Closure f) {
-                    return new Function() {
-                        @Override
-                        public Value apply(Closure xs) {
-                            return map(f, xs);
-                        }
-                    };
-                }
-            });
-
-
-    @SuppressWarnings("unchecked")
-    public static final Functor<Maybe.T> $dFunctorMaybe =
-        new Functor<Maybe.T>(
-                new Function() {
-                    @Override
-                    public Value apply(Closure f) {
-                        return new Function() {
-                            @Override
-                            public Maybe apply(Closure ma_) {
-                                Maybe ma = (Maybe) ma_.evaluate();
-                                int tag = ma.getTag();
-                                if (tag == 1) {
-                                    return Nothing.value();
-                                } else {
-                                    Closure x = ((Just) ma).x1;
-                                    return new Just(new Ap2(f, x));
-                                }
-                            }
-                        };
-                    }
-                });
 
     public static Function<Int, List<Int>> square
         = new Function<Int, List<Int>>() {
