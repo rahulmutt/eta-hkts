@@ -11,7 +11,7 @@ public class Cons<A extends Value<A>> extends List<A> {
 
     @Override
     public String toString() {
-        return "Cons (" + x1.toString() + ") (" + x2.toString() + ")";
+        return "Cons [" + x1.toString() + "," + x2.toString() + "]";
     }
 
     @Override

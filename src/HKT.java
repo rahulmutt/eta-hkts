@@ -1,19 +1,116 @@
 public class HKT {
     public static void main(String[] args) {
-        List<Int> intList =
-            new Cons<Int>(new Izh(1)
-          , new Cons<Int>(new Izh(2)
-          , new Cons<Int>(new Izh(3), Nil.nil())));
-
         System.out.println("> let square x = [x, x*x]");
         System.out.println("> map square [1..3]");
-        List<List<Int>> result = map(square, intList);
+        List<Int> intList =
+            new Cons<Int>(new Izh(1)
+           ,new Cons<Int>(new Izh(2)
+           ,new Cons<Int>(new Izh(3)
+           ,Nil.value())));
+        List<List<Int>> result0 = map(square, intList);
         System.out.print("it = ");
-        System.out.println(result);
+        System.out.println(result0);
         System.out.println("> deepseq it");
-        result.force();
-        System.out.println(result);
+        result0.force();
+        System.out.println(result0);
+        System.out.println("> let fcatMaybes def fma = fmap (\\case { Just x -> x; Nothing -> def }) fma");
+        System.out.println("> fcatMaybes 0 (Just Nothing)");
+        Maybe<Int> result1
+            = fcatMaybes($dFunctorMaybe, new Izh(0)
+                        ,new Just<Maybe<Int>>(Nothing.value()));
+        result1.force();
+        System.out.println(result1);
+        System.out.println("> fcatMaybes 0 (Just (Just 1))");
+        result1 = fcatMaybes($dFunctorMaybe, new Izh(0)
+                            ,new Just<Maybe<Int>>(new Just<Int>(new Izh(1))));
+        result1.force();
+        System.out.println(result1);
+        System.out.println("> fcatMaybes 0 Nothing");
+        result1 = fcatMaybes($dFunctorMaybe, new Izh(0)
+                             ,Nothing.value());
+        result1.force();
+        System.out.println(result1);
+        System.out.println("> fcatMaybes 2 [Just 1, Nothing, Just 3]");
+        List<Maybe<Int>> maybeIntList =
+            new Cons<Maybe<Int>>(new Just<Int>(new Izh(1))
+           ,new Cons<Maybe<Int>>(Nothing.value()
+           ,new Cons<Maybe<Int>>(new Just<Int>(new Izh(3))
+           ,Nil.value())));
+        List<Int> result2 = fcatMaybes($dFunctorList, new Izh(2), maybeIntList);
+        System.out.print("it = ");
+        System.out.println(result2);
+        result2.force();
+        System.out.println(result2);
     }
+
+    /* fcatMaybes :: (Functor f) => a -> f (Maybe a) -> f a
+       fcatMaybes def fma = fmap maybeDef fma
+         where maybeDef (Just a) = a
+               maybeDef Nothing  = def
+    */
+
+    public static <F extends TyCon, A extends Value<A>, B extends Value<B>, TMA extends T1<F, Maybe<A>, TMA>, TA extends T1<F, A, TA>>
+        TA fcatMaybes(Functor<F> f, Closure<A> def, Closure<TMA> fma) {
+        Function<Maybe<A>, A> maybeDef = new fcatMaybes$1<A>(def);
+        return f.<Maybe<A>,A,TMA,TA>fmap().evaluate().apply(maybeDef).apply(fma);
+    }
+
+    public static class fcatMaybes$1<A extends Value<A>> extends Function<Maybe<A>, A> {
+        private Closure<A> def;
+
+        public fcatMaybes$1(Closure<A> def) {
+            this.def = def;
+        }
+
+        @Override
+        public A apply(Closure<Maybe<A>> x_) {
+            Maybe<A> x = x_.evaluate();
+            int tag = x.getTag();
+            if (tag == 1) {
+                return def.evaluate();
+            } else {
+                return ((Just<A>) x).x1.evaluate();
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static final Functor<List.T> $dFunctorList =
+        new Functor<List.T>(
+            new Function() {
+                @Override
+                public Value apply(Closure f) {
+                    return new Function() {
+                        @Override
+                        public Value apply(Closure xs) {
+                            return map(f, xs);
+                        }
+                    };
+                }
+            });
+
+
+    @SuppressWarnings("unchecked")
+    public static final Functor<Maybe.T> $dFunctorMaybe =
+        new Functor<Maybe.T>(
+                new Function() {
+                    @Override
+                    public Value apply(Closure f) {
+                        return new Function() {
+                            @Override
+                            public Maybe apply(Closure ma_) {
+                                Maybe ma = (Maybe) ma_.evaluate();
+                                int tag = ma.getTag();
+                                if (tag == 1) {
+                                    return Nothing.value();
+                                } else {
+                                    Closure x = ((Just) ma).x1;
+                                    return new Just(new Ap2(f, x));
+                                }
+                            }
+                        };
+                    }
+                });
 
     public static Function<Int, List<Int>> square
         = new Function<Int, List<Int>>() {
@@ -21,7 +118,7 @@ public class HKT {
                 public List<Int> apply(Closure<Int> lazy_x) {
                     int x = ((Izh) lazy_x.evaluate()).x1;
                     return new Cons<Int>(new Izh(x)
-                                            ,new Cons<Int>(new Izh(x * x), Nil.nil()));
+                                        ,new Cons<Int>(new Izh(x * x), Nil.value()));
                 }
             };
 
@@ -30,21 +127,21 @@ public class HKT {
         List<A> xs = lazy_xs.evaluate();
         int tag = xs.getTag();
         if (tag == 1) {
-            return Nil.nil();
+            return Nil.value();
         } else {
             Cons<A> cons = (Cons<A>) xs;
             Closure<A> lazy_head = cons.x1;
             Closure<List<A>> lazy_tail = cons.x2;
-            return new Cons<B>(new Map$1<A, B>(lazy_f, lazy_head)
+            return new Cons<B>(new Ap2<A, B>(lazy_f, lazy_head)
                               ,new Map$2<A, B>(lazy_f, lazy_tail));
         }
     }
 
-    public static class Map$1<A extends Value<A>, B extends Value<B>> extends Thunk<B> {
+    public static class Ap2<A extends Value<A>, B extends Value<B>> extends Thunk<B> {
         private Closure<Function<A,B>> lazy_f;
         private Closure<A>             lazy_x;
 
-        public Map$1(Closure<Function<A,B>> lazy_f, Closure<A> lazy_x) {
+        public Ap2(Closure<Function<A,B>> lazy_f, Closure<A> lazy_x) {
             this.lazy_f = lazy_f;
             this.lazy_x = lazy_x;
         }
