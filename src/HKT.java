@@ -46,8 +46,8 @@ public class HKT {
     /* Dictionaries for Maybe */
 
     @SuppressWarnings("unchecked")
-    public static final Functor<Type<Maybe>> $dFunctorMaybe =
-        new Functor<Type<Maybe>>(
+    public static final Functor<Type<Maybe<?>>> $dFunctorMaybe =
+        new Functor<Type<Maybe<?>>>(
             new Function() {
                 @Override
                 public Value apply(Closure f) {
@@ -68,8 +68,8 @@ public class HKT {
             });
 
     @SuppressWarnings("unchecked")
-    public static final Applicative<Type<Maybe>> $dApplicativeMaybe =
-        new Applicative<Type<Maybe>>(
+    public static final Applicative<Type<Maybe<?>>> $dApplicativeMaybe =
+        new Applicative<Type<Maybe<?>>>(
             $dFunctorMaybe,
             /* pure :: a -> Maybe a*/
             new Function() {
@@ -100,8 +100,8 @@ public class HKT {
             });
 
     @SuppressWarnings("unchecked")
-    public static final Monad<Type<Maybe>> $dMonadMaybe =
-        new Monad<Type<Maybe>>(
+    public static final Monad<Type<Maybe<?>>> $dMonadMaybe =
+        new Monad<Type<Maybe<?>>>(
             $dApplicativeMaybe,
             /* bind :: Maybe a -> (a -> Maybe b) -> Maybe b */
             new Function() {
@@ -126,8 +126,8 @@ public class HKT {
     /* Dictionaries for List */
 
     @SuppressWarnings("unchecked")
-    public static final Functor<Type<List>> $dFunctorList =
-        new Functor<Type<List>>(
+    public static final Functor<Type<List<?>>> $dFunctorList =
+        new Functor<Type<List<?>>>(
             new Function() {
                 @Override
                 public Value apply(Closure f) {
@@ -141,8 +141,8 @@ public class HKT {
             });
 
     @SuppressWarnings("unchecked")
-    public static final Applicative<Type<List>> $dApplicativeList =
-        new Applicative<Type<List>>(
+    public static final Applicative<Type<List<?>>> $dApplicativeList =
+        new Applicative<Type<List<?>>>(
             $dFunctorList,
             /* pure :: a -> List a*/
             new Function() {
