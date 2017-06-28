@@ -46,8 +46,8 @@ public class HKT {
     /* Dictionaries for Maybe */
 
     @SuppressWarnings("unchecked")
-    public static final Functor<Maybe.T> $dFunctorMaybe =
-        new Functor<Maybe.T>(
+    public static final Functor<Type<Maybe>> $dFunctorMaybe =
+        new Functor<Type<Maybe>>(
             new Function() {
                 @Override
                 public Value apply(Closure f) {
@@ -68,8 +68,8 @@ public class HKT {
             });
 
     @SuppressWarnings("unchecked")
-    public static final Applicative<Maybe.T> $dApplicativeMaybe =
-        new Applicative<Maybe.T>(
+    public static final Applicative<Type<Maybe>> $dApplicativeMaybe =
+        new Applicative<Type<Maybe>>(
             $dFunctorMaybe,
             /* pure :: a -> Maybe a*/
             new Function() {
@@ -100,8 +100,8 @@ public class HKT {
             });
 
     @SuppressWarnings("unchecked")
-    public static final Monad<Maybe.T> $dMonadMaybe =
-        new Monad<Maybe.T>(
+    public static final Monad<Type<Maybe>> $dMonadMaybe =
+        new Monad<Type<Maybe>>(
             $dApplicativeMaybe,
             /* bind :: Maybe a -> (a -> Maybe b) -> Maybe b */
             new Function() {
@@ -126,8 +126,8 @@ public class HKT {
     /* Dictionaries for List */
 
     @SuppressWarnings("unchecked")
-    public static final Functor<List.T> $dFunctorList =
-        new Functor<List.T>(
+    public static final Functor<Type<List>> $dFunctorList =
+        new Functor<Type<List>>(
             new Function() {
                 @Override
                 public Value apply(Closure f) {
@@ -141,8 +141,8 @@ public class HKT {
             });
 
     @SuppressWarnings("unchecked")
-    public static final Applicative<List.T> $dApplicativeList =
-        new Applicative<List.T>(
+    public static final Applicative<Type<List>> $dApplicativeList =
+        new Applicative<Type<List>>(
             $dFunctorList,
             /* pure :: a -> List a*/
             new Function() {
@@ -162,7 +162,7 @@ public class HKT {
                maybeDef Nothing  = def
     */
 
-    public static <F extends TyCon, A extends Value<A>, B extends Value<B>, TMA extends T1<F, Maybe<A>, TMA>, TA extends T1<F, A, TA>>
+    public static <F extends Type<? extends K1<K0,K0>>, A extends Value<A>, B extends Value<B>, TMA extends TypedValue<T1<K0,K0,F,Maybe<A>>, TMA>, TA extends TypedValue<T1<K0,K0,F,A>,TA>>
         TA fcatMaybes(Functor<F> f, Closure<A> def, Closure<TMA> fma) {
         Function<Maybe<A>, A> maybeDef = new fcatMaybes$1<A>(def);
         return f.<Maybe<A>,A,TMA,TA>fmap().evaluate().apply(maybeDef).apply(fma);

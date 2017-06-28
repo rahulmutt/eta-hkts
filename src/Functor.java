@@ -1,5 +1,5 @@
 @SuppressWarnings("unchecked")
-public class Functor<F extends TyCon> extends DataCon<Functor<F>> {
+public class Functor<F extends Type<? extends K1<K0,K0>>> extends DataCon<Functor<F>> {
     Closure fmap;
 
     public Functor(Closure fmap) {
@@ -7,7 +7,8 @@ public class Functor<F extends TyCon> extends DataCon<Functor<F>> {
     }
 
     public <A extends Value<A>, B extends Value<B>
-           ,FA extends T1<F, A, FA>, FB extends T1<F, B, FB>>
+           ,FA extends TypedValue<T1<K0,K0,F,A>, FA>
+           ,FB extends TypedValue<T1<K0,K0,F,B>, FB>>
         Closure<Function<Function<A,B>, Function<FA, FB>>> fmap() {
         return fmap;
     }
